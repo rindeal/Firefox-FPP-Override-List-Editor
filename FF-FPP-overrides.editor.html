@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<!--
+=====================================================================
+SPDX-FileCopyrightText:  ANNO DOMINI 2024  Jan Chren (rindeal)
+SPDX-License-Identifier: AGPL-3.0-only
+=====================================================================
+-->
+<html lang="en" data-theme="dark">
+
+<head>
+  <!--- Meta tags ----------------------------------------------------------->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark" />
+
+  <!--- PicoCSS ------------------------------------------------------------->
+  <!-- Start with orange https://github.com/picocss/pico/blob/main/css/pico.orange.css -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.blue.min.css" referrerpolicy="no-referrer" />
+
+  <!--- AlpineJS ------------------------------------------------------------>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3/dist/cdn.min.js" referrerpolicy="no-referrer"></script>
+
+  <!--- Title --------------------------------------------------------------->
+  <title>Firefox's privacy.fingerprintingProtection.overrides Editor</title>
+
+  <!--- Styles -------------------------------------------------------------->
+  <!--- Firefox Brand Color Palette -->
+  <style> 
+    :root {
+      --firefox-color-clementine: #E66000;     /* A bright orange-red color (primary) */
+      --firefox-color-pizazz: #FF9500;         /* A vibrant orange color (secondary) */
+      --firefox-color-supernova: #FFCB00;      /* A bright yellow color (accent) */
+      --firefox-color-endeavour: #00539F;      /* A deep blue color (secondary) */
+      --firefox-color-cerulean: #0095DD;       /* A bright blue color (accent) */
+      --firefox-color-grape: #331E54;          /* Another bright blue color (accent) */
+      --firefox-color-prussian-blue: #002147;  /* A dark blue color (background) */
+    }
+  </style>
+
+  <!--- Root Pico CSS Variable Overrides and Custom Definitions -------------->
+  <style>
+    /* DEBUG TODO */
+    /* [pico-data-theme=dark] {
+      --pico-background-color: #13171f;
+      --pico-color: #c2c7d0;
+      --pico-text-selection-color: rgba(245, 107, 61, 0.1875);
+      --pico-muted-color: #7b8495;
+      --pico-muted-border-color: #202632;
+      --pico-primary: #f56b3d;
+      --pico-primary-background: #d24317;
+      --pico-primary-border: var(--pico-primary-background);
+      --pico-primary-underline: rgba(245, 107, 61, 0.5);
+      --pico-primary-hover: #f8a283;
+      --pico-primary-hover-background: #e74b1a;
+      --pico-primary-hover-border: var(--pico-primary-hover-background);
+      --pico-primary-hover-underline: var(--pico-primary-hover);
+      --pico-primary-focus: rgba(245, 107, 61, 0.375);
+      --pico-primary-inverse: #fff;
+      --pico-secondary: #969eaf;
+      --pico-secondary-background: #525f7a;
+      --pico-secondary-border: var(--pico-secondary-background);
+      --pico-secondary-underline: rgba(150, 158, 175, 0.5);
+      --pico-secondary-hover: #b3b9c5;
+      --pico-secondary-hover-background: #5d6b89;
+      --pico-secondary-hover-border: var(--pico-secondary-hover-background);
+      --pico-secondary-hover-underline: var(--pico-secondary-hover);
+      --pico-secondary-focus: rgba(144, 158, 190, 0.25);
+      --pico-secondary-inverse: #fff;
+      --pico-contrast: #dfe3eb;
+      --pico-contrast-background: #eff1f4;
+      --pico-contrast-border: var(--pico-contrast-background);
+      --pico-contrast-underline: rgba(223, 227, 235, 0.5);
+      --pico-contrast-hover: #fff;
+      --pico-contrast-hover-background: #fff;
+      --pico-contrast-hover-border: var(--pico-contrast-hover-background);
+      --pico-contrast-hover-underline: var(--pico-contrast-hover);
+      --pico-contrast-focus: rgba(207, 213, 226, 0.25);
+      --pico-contrast-inverse: #000;
+      --pico-box-shadow: 0.0145rem 0.029rem 0.174rem rgba(7, 9, 12, 0.01698), 0.0335rem 0.067rem 0.402rem rgba(7, 9, 12, 0.024), 0.0625rem 0.125rem 0.75rem rgba(7, 9, 12, 0.03), 0.1125rem 0.225rem 1.35rem rgba(7, 9, 12, 0.036), 0.2085rem 0.417rem 2.502rem rgba(7, 9, 12, 0.04302), 0.5rem 1rem 6rem rgba(7, 9, 12, 0.06), 0 0 0 0.0625rem rgba(7, 9, 12, 0.015);
+      --pico-h1-color: #f0f1f3;
+      --pico-h2-color: #e0e3e7;
+      --pico-h3-color: #c2c7d0;
+      --pico-h4-color: #b3b9c5;
+      --pico-h5-color: #a4acba;
+      --pico-h6-color: #8891a4;
+      --pico-mark-background-color: #014063;
+      --pico-mark-color: #fff;
+      --pico-ins-color: #62af9a;
+      --pico-del-color: #ce7e7b;
+      --pico-blockquote-border-color: var(--pico-muted-border-color);
+      --pico-blockquote-footer-color: var(--pico-muted-color);
+      --pico-button-box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+      --pico-button-hover-box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+      --pico-table-border-color: var(--pico-muted-border-color);
+      --pico-table-row-stripped-background-color: rgba(111, 120, 135, 0.0375);
+      --pico-code-background-color: #1a1f28;
+      --pico-code-color: #8891a4;
+      --pico-code-kbd-background-color: var(--pico-color);
+      --pico-code-kbd-color: var(--pico-background-color);
+      --pico-form-element-background-color: #1c212c;
+      --pico-form-element-selected-background-color: #2a3140;
+      --pico-form-element-border-color: #2a3140;
+      --pico-form-element-color: #e0e3e7;
+      --pico-form-element-placeholder-color: #8891a4;
+      --pico-form-element-active-background-color: #1a1f28;
+      --pico-form-element-active-border-color: var(--pico-primary-border);
+      --pico-form-element-focus-color: var(--pico-primary-border);
+      --pico-form-element-disabled-opacity: 0.5;
+      --pico-form-element-invalid-border-color: #964a50;
+      --pico-form-element-invalid-active-border-color: #b7403b;
+      --pico-form-element-invalid-focus-color: var(--pico-form-element-invalid-active-border-color);
+      --pico-form-element-valid-border-color: #2a7b6f;
+      --pico-form-element-valid-active-border-color: #16896a;
+      --pico-form-element-valid-focus-color: var(--pico-form-element-valid-active-border-color);
+      --pico-switch-background-color: #333c4e;
+      --pico-switch-checked-background-color: var(--pico-primary-background);
+      --pico-switch-color: #fff;
+      --pico-switch-thumb-box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+      --pico-range-border-color: #202632;
+      --pico-range-active-border-color: #2a3140;
+      --pico-range-thumb-border-color: var(--pico-background-color);
+      --pico-range-thumb-color: var(--pico-secondary-background);
+      --pico-range-thumb-active-color: var(--pico-primary-background);
+      --pico-accordion-border-color: var(--pico-muted-border-color);
+      --pico-accordion-active-summary-color: var(--pico-primary-hover);
+      --pico-accordion-close-summary-color: var(--pico-color);
+      --pico-accordion-open-summary-color: var(--pico-muted-color);
+      --pico-card-background-color: #181c25;
+      --pico-card-border-color: var(--pico-card-background-color);
+      --pico-card-box-shadow: var(--pico-box-shadow);
+      --pico-card-sectioning-background-color: #1a1f28;
+      --pico-dropdown-background-color: #181c25;
+      --pico-dropdown-border-color: #202632;
+      --pico-dropdown-box-shadow: var(--pico-box-shadow);
+      --pico-dropdown-color: var(--pico-color);
+      --pico-dropdown-hover-background-color: #202632;
+      --pico-loading-spinner-opacity: 0.5;
+      --pico-modal-overlay-background-color: rgba(8, 9, 10, 0.75);
+      --pico-progress-background-color: #202632;
+      --pico-progress-color: var(--pico-primary-background);
+      --pico-tooltip-background-color: var(--pico-contrast-background);
+      --pico-tooltip-color: var(--pico-contrast-inverse);
+      --pico-icon-valid: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='rgb(42, 123, 111)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E");
+      --pico-icon-invalid: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='rgb(150, 74, 80)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'%3E%3C/circle%3E%3Cline x1='12' y1='8' x2='12' y2='12'%3E%3C/line%3E%3Cline x1='12' y1='16' x2='12.01' y2='16'%3E%3C/line%3E%3C/svg%3E");
+      color-scheme: dark;
+    } */
+
+    :root {
+      /* --pico-text-selection-color: var(--firefox-color-spanish-orange-darkest); */
+      --pico-primary: var(--firefox-color-clementine);
+      --pico-primary-background: color-mix(in srgb, var(--firefox-color-clementine), black 20%);
+      --pico-primary-hover: color-mix(in srgb, var(--firefox-color-clementine), white 20%);
+      --pico-primary-hover-background: color-mix(in srgb, var(--firefox-color-clementine), black 10%);
+      --pico-secondary-background: color-mix(in srgb, var(--firefox-color-endeavour), white 10%);
+      --pico-secondary-hover-background: color-mix(in srgb, var(--firefox-color-endeavour), white 20%);
+      --pico-range-thumb-active-color: color-mix(in srgb, var(--firefox-color-clementine), black 20%);
+      --pico-progress-color: color-mix(in srgb, var(--firefox-color-clementine), black 20%);
+      --pico-code-color: color-mix(in srgb, var(--firefox-color-clementine), black 15%);
+      --pico-card-sectioning-background-color: color-mix(in srgb, var(--firefox-color-prussian-blue), black 10%);
+    }
+  </style>
+
+  <!---  .has-*, .is-*  ------------------>
+  <style>
+    .has-text-left {
+      text-align: left;
+    }
+
+    .has-text-right {
+      text-align: right;
+    }
+
+    .has-text-centered {
+      text-align: center;
+    }
+
+    .has-text-justified {
+      text-align: justify;
+    }
+
+    .is-flex {
+      display: flex
+    }
+
+    .has-text-font-roman {
+      font-family: 'Times New Roman', Times, serif;
+    }
+  </style>
+
+  <!--- Style .textarea ------------------>
+  <style>
+    .textarea {
+      width: 100%;
+      display: block;
+      resize: vertical;
+      appearance: none;
+      padding: var(--pico-form-element-spacing-vertical) var(--pico-form-element-spacing-horizontal);
+      --pico-background-color: var(--pico-form-element-background-color);
+      --pico-border-color: var(--pico-form-element-border-color);
+      --pico-color: var(--pico-form-element-color);
+      --pico-box-shadow: none;
+      border: var(--pico-border-width) solid var(--pico-border-color);
+      border-radius: var(--pico-border-radius);
+      outline: 0;
+      background-color: var(--pico-background-color);
+      box-shadow: var(--pico-box-shadow);
+      color: var(--pico-color);
+      font-weight: var(--pico-font-weight);
+      transition: background-color var(--pico-transition), border-color var(--pico-transition), color var(--pico-transition), box-shadow var(--pico-transition);
+      margin-bottom: var(--pico-spacing);
+      cursor: text;
+    }
+
+    .textarea::placeholder {
+      color: var(--pico-form-element-placeholder-color);
+      opacity: 1
+    }
+
+    .textarea:not([readonly]):is(:active, :focus) {
+      /* --pico-background-color: var(--pico-form-element-active-background-color); */
+      --pico-border-color: var(--pico-form-element-active-border-color);
+    }
+
+    .textarea:not([readonly]):is(:focus) {
+      --pico-box-shadow: 0 0 0 var(--pico-outline-width) var(--pico-form-element-focus-color);
+    }
+
+    .textarea[disabled] {
+      opacity: var(--pico-form-element-disabled-opacity);
+      pointer-events: none;
+      opacity: 1;
+    }
+
+    .textarea:is([aria-invalid]) {
+      padding-right: calc(var(--pico-form-element-spacing-horizontal) + 1.5rem) !important;
+      padding-left: var(--pico-form-element-spacing-horizontal);
+      padding-inline-start: var(--pico-form-element-spacing-horizontal) !important;
+      padding-inline-end: calc(var(--pico-form-element-spacing-horizontal) + 1.5rem) !important;
+      background-position: center right .75rem;
+      background-size: 1rem auto;
+      background-repeat: no-repeat;
+    }
+
+    .textarea[aria-invalid=false] {
+      background-image: var(--pico-icon-valid);
+      --pico-border-color: var(--pico-form-element-valid-border-color);
+    }
+
+    .textarea[aria-invalid=false]:is(:active, :focus) {
+      --pico-border-color: var(--pico-form-element-valid-active-border-color) !important;
+      --pico-box-shadow: 0 0 0 var(--pico-outline-width) var(--pico-form-element-valid-focus-color) !important;
+    }
+
+    .textarea[aria-invalid=true] {
+      background-image: var(--pico-icon-invalid);
+      --pico-border-color: var(--pico-form-element-invalid-border-color);
+    }
+
+    .textarea[aria-invalid=true]:is(:active, :focus) {
+      --pico-border-color: var(--pico-form-element-invalid-active-border-color) !important;
+      --pico-box-shadow: 0 0 0 var(--pico-outline-width) var(--pico-form-element-invalid-focus-color) !important;
+    }
+
+    /* 
+    .textarea[aria-invalid="false"]:is(:active, :focus) {
+      background-color: #000;
+    } */
+  </style>
+
+  <!--- .FPP-overrides -------------->
+  <style>
+    :root {
+      --FPP-overrides-border-color: var(--firefox-color-cerulean);
+      --FPP-overrides-box-shadow: 0 0 0 var(--pico-outline-width) var(--firefox-color-cerulean);
+    }
+
+    .textarea.FPP-overrides {
+      white-space: none;
+      word-break: break-all;
+      min-height: 150px;
+    }
+
+    table.FPP-overrides th {
+      --pico-background-color: var(--firefox-color-grape);
+    }
+
+    .FPP-overrides ins,
+    .FPP-overrides del {
+      text-decoration: none;
+    }
+
+    .FPP-overrides span {
+      --pico-color: var(--pico-color-slate-50);
+    }
+
+    .FPP-overrides:is(:active, :focus) {
+      --pico-border-color: var(--FPP-overrides-border-color) !important;
+      --pico-box-shadow: var(--FPP-overrides-box-shadow) !important;
+    }
+
+    .FPP-overrides::is([aria-invalid]):is(:active, :focus) {
+      --pico-border-color: var(--FPP-overrides-border-color) !important;
+      --pico-box-shadow: var(--FPP-overrides-box-shadow) !important;
+    }
+
+    .FPP-overrides[aria-invalid=true]:is(:active, :focus) {
+      --pico-border-color: var(--FPP-overrides-border-color) !important;
+      --pico-box-shadow: var(--FPP-overrides-box-shadow) !important;
+    }
+
+    .FPP-overrides[aria-invalid=false]:is(:active, :focus) {
+      --pico-border-color: var(--FPP-overrides-border-color) !important;
+      --pico-box-shadow: var(--FPP-overrides-box-shadow) !important;
+    }
+
+    .FPP-overrides[readonly]:is(:active, :focus) {
+      --pico-border-color: var(--FPP-overrides-border-color) !important;
+      --pico-box-shadow: var(--FPP-overrides-box-shadow) !important;
+    }
+
+    .FPP-overrides[readonly]::is([aria-invalid]):is(:active, :focus) {
+      --pico-border-color: var(--FPP-overrides-border-color) !important;
+      --pico-box-shadow: var(--FPP-overrides-box-shadow) !important;
+    }
+
+    .FPP-overrides[readonly][aria-invalid=true]:is(:active, :focus) {
+      --pico-border-color: var(--FPP-overrides-border-color) !important;
+      --pico-box-shadow: var(--FPP-overrides-box-shadow) !important;
+    }
+
+    .FPP-overrides[readonly][aria-invalid=false]:is(:active, :focus) {
+      --pico-border-color: var(--FPP-overrides-border-color) !important;
+      --pico-box-shadow: var(--FPP-overrides-box-shadow) !important;
+    }
+  </style>
+
+  <style>
+    .title {
+      color: var(--firefox-color-clementine);
+    }
+
+    .subtitle {
+      color: color-mix(in srgb, var(--firefox-color-endeavour), white 40%);
+    }
+
+    code {
+      padding: .175rem;
+    }
+
+    /* Keep the column at minimum width */
+    th.min,
+    td.min {
+      width: 1%;
+      /* white-space: nowrap; */
+      /* max-width: 100px; */
+    }
+  </style>
+
+  <!--- Scripts ------------------------------------------------------------->
+  <script></script>
+</head>
+
+<body>
+  <!-------------- HEADER --------------->
+  <header class="container">
+    <!-- logo, navbar, ...-->
+  </header>
+
+  <!-------------- MAIN --------------->
+  <main x-data="FirefoxRFPOverridesEditor()" class="container">
+
+    <!-------------- Intro --------------->
+    <hgroup id="Intro" class="">
+      <h1 class="title">
+        <span class="">Firefox</span> <code>privacy.fpP.overrides</code> Editor
+      </h1>
+      <br>
+      <p class="subtitle">
+        This page allows you to easily edit the value of
+        <code>privacy.fingerprintingProtection.overrides</code>, which is a
+        Firefox's
+        <code>about:config</code>
+        entry.
+      </p>
+    </hgroup>
+
+    <hr>
+
+    <!----------- Details -------------->
+    <section id="DetailsSection">
+      <article>
+        <details>
+          <summary role="button" class="outline">Details</summary>
+          <p>...
+            <a
+               href="https://searchfox.org/mozilla-central/source/toolkit/components/resistfingerprinting/RFPTargets.inc">
+              <code>resistfingerprinting/RFPTargets.inc</code></a> header file.
+          </p>
+        </details>
+      </article>
+
+    </section>
+
+    <!-------------- I/O Section ------------->
+    <section id="IOSection">
+      <div class="grid">
+
+        <!-------- Input -------------->
+        <article>
+          <header>Input</header>
+          <label>Your current value</label>
+          <textarea x-data="{input:''}" id="InputTextArea" x-model="input"
+                    class="textarea FPP-overrides" aria-required="true" :aria-invalid="!parseInput(input)"
+                    spellcheck="false"
+                    placeholder="Enter your overrides value here..."></textarea>
+        </article>
+
+        <!-------- Output -------------->
+        <article>
+          <header>Output</header>
+          <label>Your new value</label>
+          <div id="OutputTextArea" class="textarea FPP-overrides overflow-auto"
+               contenteditable="false" tabindex="0" readonly="true" spellcheck="false"
+               x-init="false && addStylesFromId($el, 'InputTextArea')"
+               @keydown="(e=$event) && e.ctrlKey && e.key === 'a' && (e.preventDefault() || window.getSelection().selectAllChildren($el))
+               "><ins>+AllTargets</ins><template
+                      x-for="item in data"
+                      :key="item.name"><span x-show="!item.on">,<del x-text="`-${item.name}`"></del></span></template></div>
+          <!-- DO NOT INTRODUCE WHITESPACE BETWEEN ELEMENTS IN THE TEMPLATE -->
+        </article>
+
+      </div>
+    </section>
+
+    <!------------ Table section ------------->
+    <section id="TableSection">
+      <!-- set min-height to prevent glitching the page when a user search results in an empty table -->
+      <article style="min-height: 800px;">
+
+        <header>
+          Table
+        </header>
+
+        <!---------- Table search ---------------->
+        <div class="grid">
+          <input type="search" name="search" aria-label="Search"
+                 placeholder="Search all columns and keywords, ignoring case..."
+                 @input="filter($el.value)"
+                 @keydown="$event.key === 'Escape' && ['alt', 'ctrl', 'shift', 'meta'].every(k => !$event[`${k}Key`]) && filter($el.value = '')"
+                 spellcheck="false" />
+          <div></div>
+        </div>
+
+        <!----------- Table itself ----------------->
+        <!-- `.overflow-auto` enables automatic scrollbars to an element if its content extends beyond its limits. -->
+        <div class="overflow-auto">
+          <table class="table striped FPP-overrides" @override-toggle="sort()">
+            <thead>
+              <tr>
+                <!-- @allCheckedUpdate="allChecked = data.every(x => x.on)" -->
+                <th><input type="checkbox"
+                  x-data="{ allChecked: data.every(r=>r.on) }"
+                  :checked="allChecked"
+                  @override-toggle.window="allChecked=data.every(r=>r.on)"
+                  @change="data.forEach(r=>r.on = !allChecked) ; (allChecked = !allChecked)"
+                  /></th>
+                <th class="min">ID</th>
+                <th>Name</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <template x-for="item in data" :key="item.name">
+                <tr x-show="item.show" x-transition.duration.200ms>
+                  <td>
+                    <input x-model="item.on" @change="$dispatch('override-toggle')" type="checkbox" />
+                  </td>
+                  <td x-text="item.id" class="has-text-right min"></td>
+                  <td x-text="item.name" class=""></td>
+                  <td x-html="format(item.description)" x-data="{format(t){return t.replace(/`([^`]+)`/g, '<code>$1</code>')}}" class="">
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <footer class="container">
+    <p class="has-text-centered has-text-font-roman">ANNO DOMINI 2024</p>
+  </footer>
+
+  <script>
+    function FirefoxRFPOverridesEditor() {
+      return {
+        init() {
+          for (const row of this.data) {
+            row.on = true
+            row.show = true
+            if (row.name in this.dataNameIdx) new Error() // assert(!duplicate)
+            this.dataNameIdx[row.name] = row
+          }
+          for (s of ["CSSPrefersColorScheme", "JSDateTimeUTC", "WebGLRenderCapability"]) {
+            this.dataNameIdx[s].on = false
+          }
+          this.sort()
+        },
+
+        parseInput(input) {
+          targetsToToggle = []
+          input = input.replace(/\s/g, '')
+          if (!input.length) return true
+          for(const word of input.split(',')) {
+            const match = word.match(/([+-])([a-zA-Z_][a-zA-Z0-9_]{1,64})(?:\s|,|$)/)
+            if (!match) return false
+            const [on, name] = [match[1] !== '-', match[2]]
+            // TODO handle AllTargets correctly
+            if (name !== "AllTargets" && !(name in this.dataNameIdx)) return false
+            if (this.dataNameIdx[name].on != on) targetsToToggle.push(name)
+          }
+          for (const t of targetsToToggle) this.dataNameIdx[t].on = !this.dataNameIdx[t].on
+          this.$dispatch('override-toggle')
+          return true
+        },
+        
+        sort() { this.data.sort((a, b) => (a.on - b.on) || a.name.localeCompare(b.name)) },
+        filter(searchFilter) {
+          const query = searchFilter.trim().replace(/\s+/, ' ').toLowerCase();
+          for (const it of this.data)
+          // NOTE: all values of this.data used for filtering must be strings!
+            it.show = !query || [it.name, it.description, it.keywords].some(str => str?.toLowerCase().includes(query))
+          return true
+        },
+
+        dataNameIdx: {},
+        data: [
+          { name: "AudioContext", id: 48, description: "", keywords: "sound" },
+          { name: "AudioSampleRate", id: 38, description: "", keywords: "sound" },
+          { name: "CanvasExtractionBeforeUserInputIsBlocked", id: 11, description: "" },
+          { name: "CanvasExtractionFromThirdPartiesIsBlocked", id: 10, description: "" },
+          { name: "CanvasImageExtractionPrompt", id: 9, description: "Canvas targets: For unusual combinations of these, see comments in IsImageExtractionAllowed" },
+          { name: "CanvasRandomization", id: 8, description: "Add random noises to image data extracted from canvas." },
+          { name: "CSSColorInfo", id: 52, description: "`color`/`color-gamut` CSS media features" },
+          { name: "CSSDeviceSize", id: 51, description: "`device-height`/`device-width` CSS media features" },
+          { name: "CSSInvertedColors", id: 55, description: "`inverted-colors` CSS media feature" },
+          { name: "CSSPointerCapabilities", id: 57, description: "" },
+          { name: "CSSPrefersColorScheme", id: 5, description: "`prefers-color-scheme` CSS media feature", keywords: "dark light mode theme" },
+          { name: "CSSPrefersContrast", id: 7, description: "`prefers-contrast` CSS media feature" },
+          { name: "CSSPrefersReducedMotion", id: 6, description: "`prefers-reduced-motion` CSS media feature" },
+          { name: "CSSPrefersReducedTransparency", id: 54, description: "`prefers-reduced-transparency` CSS media feature" },
+          { name: "CSSResolution", id: 53, description: "`resolution` CSS media feature" },
+          { name: "CSSVideoDynamicRange", id: 56, description: "`video-dynamic-range` CSS media feature" },
+          { name: "DeviceSensors", id: 44, description: "" },
+          { name: "DOMStyleOsxFontSmoothing", id: 50, description: "" },
+          { name: "FontVisibilityBaseSystem", id: 42, description: "Visibility level of font families available to CSS font-matching" },
+          { name: "FontVisibilityLangPack", id: 43, description: "" },
+          { name: "FontVisibilityRestrictGenerics", id: 61, description: "Are font visibility restrictions applied when resolving a CSS <generic-family>? (This may block the fonts selected in Preferences from actually being used.)" },
+          { name: "FrameRate", id: 45, description: "" },
+          { name: "Gamepad", id: 23, description: "" },
+          { name: "HttpUserAgent", id: 24, description: "" },
+          { name: "JSDateTimeUTC", id: 21, description: "" },
+          { name: "JSLocale", id: 12, description: "" },
+          { name: "JSMathFdlibm", id: 22, description: "" },
+          { name: "KeyboardEvents", id: 2, description: "" },
+          { name: "MediaCapabilities", id: 37, description: "" },
+          { name: "MediaDevices", id: 36, description: "" },
+          { name: "MediaError", id: 49, description: "" },
+          { name: "MouseEventScreenPoint", id: 41, description: "" },
+          { name: "NavigatorAppVersion", id: 13, description: "Various 'client identification' values of the navigator object" },
+          { name: "NavigatorBuildID", id: 14, description: "" },
+          { name: "NavigatorConnection", id: 39, description: "" },
+          { name: "NavigatorHWConcurrency", id: 15, description: "" },
+          { name: "NavigatorOscpu", id: 16, description: "" },
+          { name: "NavigatorPlatform", id: 17, description: "" },
+          { name: "NavigatorUserAgent", id: 18, description: "" },
+          { name: "PointerEvents", id: 1, description: "" },
+          { name: "ReduceTimerPrecision", id: 34, description: "See also Reduce Timer Precision (RTP) Caller Type" },
+          { name: "RoundWindowSize", id: 46, description: "" },
+          { name: "ScreenAvailRect", id: 30, description: "" },
+          { name: "ScreenOrientation", id: 3, description: "" },
+          { name: "ScreenPixelDepth", id: 28, description: "" },
+          { name: "ScreenRect", id: 29, description: "" },
+          { name: "SiteSpecificZoom", id: 60, description: "" },
+          { name: "SpeechSynthesis", id: 4, description: "SpeechSynthesis part of the Web Speech API" },
+          { name: "StreamTrackLabel", id: 19, description: "Audio/VideoStreamTrack labels" },
+          { name: "StreamVideoFacingMode", id: 20, description: "" },
+          { name: "TouchEvents", id: 0, description: "" },
+          { name: "UseStandinsForNativeColors", id: 47, description: "" },
+          { name: "VideoElementMozFrameDelay", id: 32, description: "mozFrameDelay" },
+          { name: "VideoElementMozFrames", id: 31, description: "HTMLVideoElement mozParsedFrames, mozDecodedFrames, mozPresentedFrames, mozPaintedFrames" },
+          { name: "VideoElementPlaybackQuality", id: 33, description: "getVideoPlaybackQuality()" },
+          { name: "WebGLRenderCapability", id: 58, description: "WebGL" },
+          { name: "WebGLRenderInfo", id: 59, description: "" },
+          { name: "WidgetEvents", id: 35, description: "Hide keyboard and pointer WidgetEvents" },
+          { name: "WindowDevicePixelRatio", id: 40, description: "" },
+          { name: "WindowInnerScreenXY", id: 27, description: "" },
+          { name: "WindowOuterSize", id: 25, description: "" },
+          { name: "WindowScreenXY", id: 26, description: "" }
+        ],
+      }
+    }
+  </script>
+
+</body>
+
+</html>

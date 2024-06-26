@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+
+<!-- ===================================================================== -->
+<!-- SPDX-FileCopyrightText:  ANNO DOMINI 2024  Jan Chren (rindeal)        -->
+<!-- SPDX-License-Identifier: AGPL-3.0-only                                -->
+<!-- ===================================================================== -->
+
+<html lang="en" data-theme="dark">
+
+<head>
+  <!--- Meta tags ----------------------------------------------------------->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark" />
+
+  <!--- PicoCSS ------------------------------------------------------------->
+  <!-- https://github.com/picocss/pico/blob/main/css/pico.css -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.colors.min.css" referrerpolicy="no-referrer" />
+
+  <!--- AlpineJS ------------------------------------------------------------>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3/dist/cdn.min.js" referrerpolicy="no-referrer"></script>
+
+  <!--- Title --------------------------------------------------------------->
+  <title>Firefox privacy.fingerprintingProtection.overrides Editor</title>
+
+  <!--- Styles -------------------------------------------------------------->
+  <!--- Style: Firefox Brand Color Palette -->
+  <style>
+    :root {
+      --firefox-color-clementine: #E66000;     /* A bright orange-red color (primary) */
+      --firefox-color-pizazz: #FF9500;         /* A vibrant orange color (secondary) */
+      --firefox-color-supernova: #FFCB00;      /* A bright yellow color (accent) */
+      --firefox-color-endeavour: #00539F;      /* A deep blue color (secondary) */
+      --firefox-color-cerulean: #0095DD;       /* A bright blue color (accent) */
+      --firefox-color-grape: #331E54;          /* Another bright blue color (accent) */
+      --firefox-color-prussian-blue: #002147;  /* A dark blue color (background) */
+
+      --firefox-color-green: #4CAF50;    /* - A moderate green that balances well with the existing colors */
+      --firefox-color-green2: #8BC34A;   /* - A light lime green that adds freshness to the palette */
+      --firefox-color-green3: #009688;   /* - A teal-green that complements the blues in the palette */
+      --firefox-color-green4: #2E7D32;   /* - A dark green that provides a nice contrast */
+      --firefox-color-green5: #66BB6A;   /* - A soft green that harmonizes with the orange tones */
+      --firefox-color-green6: #43A047;   /* - A medium green that sits between the blues and oranges */
+      --firefox-color-green7: #00C853;   /* - A bright green that adds vibrancy to the palette */
+      --firefox-color-green8: #1B5E20;   /* - A deep forest green for a more serious tone */
+      --firefox-color-green9: #7CB342;   /* - A muted green that doesn't overpower the other colors */
+      --firefox-color-green10: #33691E;  /* - An olive green that adds an earthy touch */
+    }
+  </style>
+
+  <!--- Style: Root Pico CSS Variable Overrides and Custom Definitions -------------->
+  <style>
+    /* Base style variables: https://github.com/picocss/pico/blob/f943d2a/css/pico.css#L470 */
+
+    :root {
+      /* --pico-text-selection-color: var(--firefox-color-spanish-orange-darkest); */
+      /* --pico-primary: var(--firefox-color-clementine); */
+      /* --pico-primary-background: color-mix(in srgb, var(--firefox-color-endeavour), black 0%); */
+      /* --pico-primary-hover: color-mix(in srgb, var(--firefox-color-clementine), white 20%); */
+      /* --pico-primary-hover-background: color-mix(in srgb, var(--firefox-color-clementine), black 10%); */
+      /* --pico-secondary-background: color-mix(in srgb, var(--firefox-color-endeavour), white 10%); */
+      /* --pico-secondary-hover-background: color-mix(in srgb, var(--firefox-color-endeavour), white 20%); */
+      /* --pico-range-thumb-active-color: color-mix(in srgb, var(--firefox-color-clementine), black 20%); */
+      /* --pico-progress-color: color-mix(in srgb, var(--firefox-color-clementine), black 20%); */
+
+      /* --pico-code-color: color-mix(in srgb, var(--firefox-color-pizazz), black 15%); */
+      --pico-card-sectioning-background-color: color-mix(in srgb, var(--firefox-color-grape), black 0%);
+
+      --pico-form-element-invalid-active-border-color: var(--firefox-color-clementine);
+
+      /* --pico-button-hover-box-shadow --pico-primary-focus */
+    }
+  </style>
+
+  <!---  Style: .has-*, .is-*  ------------------>
+  <style>
+    .has-text-left {
+      text-align: left;
+    }
+
+    .has-text-right {
+      text-align: right;
+    }
+
+    .has-text-centered {
+      text-align: center;
+    }
+
+    .has-text-justified {
+      text-align: justify;
+    }
+
+    .is-flex {
+      display: flex
+    }
+
+    .has-text-font-roman {
+      font-family: 'Times New Roman', Times, serif;
+    }
+  </style>
+
+  <!---  Style: .textarea  ------------------>
+  <style>
+    .textarea {
+      display: block;
+      width: 100%;
+      resize: vertical;
+      padding: var(--pico-form-element-spacing-vertical) var(--pico-form-element-spacing-horizontal);
+      border: var(--pico-border-width) solid var(--pico-border-color);
+      border-radius: var(--pico-border-radius);
+      margin-bottom: var(--pico-spacing);
+      outline: 0;
+      cursor: text;
+      overflow: auto;
+
+      --pico-background-color: var(--pico-form-element-background-color);
+      --pico-border-color: var(--pico-form-element-border-color);
+      --pico-box-shadow: none;
+      --pico-color: var(--pico-form-element-color);
+      color: var(--pico-color);
+      font-weight: var(--pico-font-weight);
+      transition: background-color var(--pico-transition), border-color var(--pico-transition), color var(--pico-transition), box-shadow var(--pico-transition);
+    }
+
+    .textarea::placeholder {
+      color: var(--pico-form-element-placeholder-color);
+      opacity: 1
+    }
+
+    .textarea:is(:active, :focus) {
+      --pico-background-color: var(--pico-form-element-active-background-color);
+      --pico-border-color: var(--pico-form-element-active-border-color);
+    }
+
+    .textarea:is(:focus) {
+      --pico-box-shadow: 0 0 0 var(--pico-outline-width) var(--pico-form-element-focus-color);
+    }
+
+    .textarea:is([aria-invalid]) {
+      padding-right: calc(var(--pico-form-element-spacing-horizontal) + 1.5rem) !important;
+      padding-left: var(--pico-form-element-spacing-horizontal);
+      padding-inline-start: var(--pico-form-element-spacing-horizontal) !important;
+      padding-inline-end: calc(var(--pico-form-element-spacing-horizontal) + 1.5rem) !important;
+      background-position: center right .75rem;
+      background-size: 1rem auto;
+      background-repeat: no-repeat;
+    }
+
+    .textarea[aria-invalid=true] {
+      background-image: var(--pico-icon-invalid);
+      --pico-border-color: var(--pico-form-element-invalid-border-color);
+    }
+
+    .textarea[aria-invalid=true]:is(:active, :focus) {
+      --pico-border-color: var(--pico-form-element-invalid-active-border-color) !important;
+      --pico-box-shadow: 0 0 0 var(--pico-outline-width) var(--pico-form-element-invalid-focus-color) !important;
+    }
+  </style>
+
+  <!---  Style: .FPP-overrides  -------------->
+  <style>
+    :root {
+      --FPP-overrides-border-color: var(--firefox-color-cerulean);
+      --FPP-overrides-box-shadow: 0 0 0 var(--pico-outline-width) var(--firefox-color-cerulean);
+    }
+
+    .textarea.FPP-overrides {
+      white-space: none;
+      word-break: break-all;
+      min-height: 3em;
+      height: 10em;
+    }
+
+    table.FPP-overrides th {
+      --pico-background-color: var(--firefox-color-prussian-blue);
+    }
+
+    .FPP-overrides ins {
+      color: var(--firefox-color-green);
+    }
+
+    .FPP-overrides del {
+      color: var(--firefox-color-pizazz);
+    }
+
+    .FPP-overrides ins,
+    .FPP-overrides del {
+      text-decoration: none;
+    }
+
+    .FPP-overrides span {
+      --pico-color: var(--pico-color-slate-50);
+    }
+  </style>
+
+  <style>
+    .title {
+      color: var(--firefox-color-clementine);
+    }
+
+    .subtitle {
+      color: color-mix(in srgb, var(--firefox-color-endeavour), white 40%);
+    }
+
+    code {
+      padding: .175rem;
+    }
+
+    /* Keep the column at minimum width */
+    th.min,
+    td.min {
+      width: 1%;
+      /* white-space: nowrap; */
+      /* max-width: 100px; */
+    }
+  </style>
+
+  <!--- Scripts ------------------------------------------------------------->
+  <script></script>
+</head>
+
+<body>
+  <!-------------- HEADER --------------->
+  <header class="container">
+    <!-- logo, navbar, ...-->
+  </header>
+
+  <!-------------- MAIN --------------->
+  <main x-data="FirefoxFPPOverrideListEditor()" class="container">
+
+    <!-------------- Intro --------------->
+    <hgroup id="Intro" class="">
+      <h1 class="title">
+        <span class="">Firefox</span> fingerprintingProtection.overrides Editor
+      </h1>
+      <br>
+      <p class="subtitle">
+        This page allows you to easily fine-tune Fingerprinting Protection targets of Mozilla Firefox-based web browsers by editing
+        <code>privacy.fingerprintingProtection.overrides</code> <code>about:config</code> entry.
+      </p>
+    </hgroup>
+
+    <hr>
+
+    <!----------- Details -------------->
+    <section id="DetailsSection">
+      <article>
+        <details>
+          <summary role="button" class="outline">Details</summary>
+          <p>
+            Make sure following <code>about:config</code> settings are set:
+          </p>
+          <ul>
+            <li><code>privacy.resistFingerprinting</code>: <code>false</code></li>
+            <li><code>privacy.resistFingerprinting.pbmode</code>: <code>false</code></li>
+            <li><code>privacy.fingerprintingProtection</code>: <code>true</code></li>
+          </ul>
+          <p>
+            <a
+               href="https://searchfox.org/mozilla-central/source/toolkit/components/resistfingerprinting/RFPTargets.inc">
+              <code>resistfingerprinting/RFPTargets.inc</code></a> header file.
+          </p>
+          <p>
+            <a href="https://searchfox.org/mozilla-central/rev/67956a15835fc397334668525d528d471b19b273/toolkit/components/nimbus/FeatureManifest.yaml#2201-2233">
+              <code>fingerprintingProtection</code> <code>about:config</code> feature manifest
+            </a>
+          </p>
+          <p>
+            <a href="https://searchfox.org/mozilla-central/source/toolkit/components/resistfingerprinting/RFPTargetsDefault.inc">
+              Default RFP Targets
+            </a>
+          </p>
+          <p>
+            <a href="https://searchfox.org/mozilla-central/rev/67956a15835fc397334668525d528d471b19b273/toolkit/components/resistfingerprinting/nsRFPService.cpp#1936-1978">
+              <code>p.fPP.overrides</code> parser func
+            </a>
+          </p>
+          <p>
+            <a href="https://searchfox.org/mozilla-central/source/toolkit/components/resistfingerprinting/nsRFPService.cpp">
+              Implementation of the fingerprinting protections
+            </a>
+          </p>
+        </details>
+      </article>
+
+    </section>
+
+    <!-------------- I/O Section ------------->
+    <section id="IOSection">
+      <div class="grid">
+
+        <!-------- Input -------------->
+        <article>
+          <header>Input</header>
+          <label>Your current value</label>
+          <textarea id="InputTextArea" class="textarea FPP-overrides"
+                    x-data="{ input: '', inputValid: true }"
+                    x-model="input"
+                    @input="inputValid = parseInput(input)"
+                    aria-required="true"
+                    :aria-invalid="!inputValid"
+                    spellcheck="false"
+                    placeholder="Paste your overrides value here..."></textarea>
+        </article>
+
+        <!-------- Output -------------->
+        <article>
+          <header>Output</header>
+          <label>Your new value</label>
+          <div id="OutputTextArea" class="textarea FPP-overrides"
+            contenteditable="false" tabindex="0" readonly="true" spellcheck="false"
+            @click="window.getSelection().selectAllChildren($el)"
+            ><ins>+AllTargets</ins
+            ><template
+              x-for="item in data"
+              :key="item.name"
+              ><span x-show="!item.on">,<del x-text="`-${item.name}`"></del></span
+            ></template
+          ></div>
+          <!-- DO NOT INTRODUCE WHITESPACE BETWEEN ELEMENTS IN THE TEMPLATE -->
+        </article>
+
+      </div>
+    </section>
+
+    <!------------ Table section ------------->
+    <section id="TableSection">
+      <!-- set min-height to prevent glitching the page when a user search results in an empty table -->
+      <article style="min-height: 50em;">
+
+        <header>
+          Table
+        </header>
+
+        <!---------- Table search ---------------->
+        <div class="grid">
+          <input type="search" name="search" aria-label="Search"
+            placeholder="Search all columns and keywords, ignoring case..."
+            @input="applyDataFilter($el.value)"
+            @keydown.escape="$el.value = ''; $dispatch('input')"
+            spellcheck="false" />
+          <div></div> <!-- empty grid column -->
+        </div>
+
+        <!----------- Table itself ----------------->
+        <div class="overflow-auto">
+          <table id="tableOverrides" class="table striped FPP-overrides">
+            <thead>
+              <tr>
+                <th><input type="checkbox"
+                  :checked="allOn"
+                  @change="
+                    data.forEach(r => lazyProp(r, 'on', !allOn))
+                    onDataUpdated()
+                  "
+                  /></th>
+                <th class="min">ID</th>
+                <th>Name</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <template x-for="item in data" :key="item.name">
+                <tr x-show="item.show" x-transition.duration.200ms>
+                  <td>
+                    <input type="checkbox"
+                      x-model="item.on"
+                      @change="onDataUpdated()" />
+                  </td>
+                  <td x-text="item.id" class="has-text-right min"></td>
+                  <td x-text="item.name"></td>
+                  <td x-html="item.description.replace(/`([^`]+)`/g, '<code>$1</code>')">
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <footer class="container grid">
+    <p class="has-text-left"><a href="https://github.com/rindeal/Firefox-FPP-Override-List-Editor">Source on GitHub</a></p>
+    <p class="has-text-right"><span class="has-text-font-roman">ANNO DOMINI • 2024</span></p>
+  </footer>
+
+  <script>
+    function FirefoxFPPOverrideListEditor() {
+      return {
+        init() {
+          for (const row of this.data) {
+            row.on = true
+            row.show = true
+            if (row.name in this.dataNameIdx) new Error() // == assert(!duplicate)
+            this.dataNameIdx[row.name] = row
+          }
+          // set defaults
+          for (s of ["CSSPrefersColorScheme", "JSDateTimeUTC", "WebGLRenderCapability"]) {
+            this.dataNameIdx[s].on = false
+          }
+          this.onDataUpdated()
+        },
+
+        lazyProp: (obj, propName, value) => { obj[propName] !== value && ( obj[propName] = value ) },
+
+        parseInput(input) {
+          console.log('parseInput()', { input })
+          input = input.replace(/\s/g, '')
+          if (!input.length) return true
+
+          targetsToToggle = []
+          for(const word of input.split(',')) {
+            const match = word.match(/([+-])([a-zA-Z_][a-zA-Z0-9_]{1,64})(?:\s|,|$)/)
+            if (!match) return false
+            const [on, name] = [match[1] !== '-', match[2]]
+            if (name === "AllTargets") continue
+            if (!(name in this.dataNameIdx)) return false
+            if (this.dataNameIdx[name].on != on) targetsToToggle.push(name)
+          }
+          if (!targetsToToggle.length) return true
+          console.log('parseInput()', "targetsToToggle:", targetsToToggle)
+          for (const t of targetsToToggle) this.dataNameIdx[t].on = !this.dataNameIdx[t].on
+          this.onDataUpdated()
+
+          return true
+        },
+
+        sortData() { this.data.sort((a, b) => (a.on - b.on) || a.name.localeCompare(b.name)) },
+        applyDataFilter(filter) {
+          const query = filter.trim().replace(/\s+/, ' ').toLowerCase()
+          for (const it of this.data) {
+            this.lazyProp(it, 'show', !query || [it.id.toString(), it.name, it.description, it.keywords].some(str => str?.toLowerCase().includes(query)))
+          }
+          return true
+        },
+        onDataUpdated() {
+          this.lazyProp(this, 'allOn', this.data.every(r => r.on))
+          this.sortData()
+          console.log({data: this.data})
+        },
+
+        allOn: false,
+        dataNameIdx: {},
+        data: [
+          { name: "AudioContext", id: 48, description: "", keywords: "sound, audio, web audio api, music, noise, frequency, volume, oscillator, synthesis, playback" },
+          { name: "AudioSampleRate", id: 38, description: "", keywords: "sound, audio, frequency, sampling, bitrate, quality, resolution, fidelity, digital audio, recording" },
+          { name: "CanvasExtractionBeforeUserInputIsBlocked", id: 11, description: "", keywords: "canvas, extraction, user input, blocking, security, fingerprinting, html5, drawing, graphics, interaction" },
+          { name: "CanvasExtractionFromThirdPartiesIsBlocked", id: 10, description: "", keywords: "canvas, third-party, blocking, security, cross-origin, iframe, embedded content, scripts, resources, isolation" },
+          { name: "CanvasImageExtractionPrompt", id: 9, description: "Canvas targets: For unusual combinations of these, see comments in IsImageExtractionAllowed", keywords: "canvas, image extraction, prompt, user permission, security, privacy, data access, content rendering, pixel data, screenshot" },
+          { name: "CanvasRandomization", id: 8, description: "Add random noises to image data extracted from canvas.", keywords: "canvas, randomization, noise, image data, fingerprinting protection, obfuscation, privacy, data masking, pixel manipulation, entropy" },
+          { name: "CSSColorInfo", id: 52, description: "`color`/`color-gamut` CSS media features", keywords: "css, color, gamut, media features, display capabilities, screen, visual, rendering, color space, color profile" },
+          { name: "CSSDeviceSize", id: 51, description: "`device-height`/`device-width` CSS media features", keywords: "css, device size, height, width, screen dimensions, responsive design, media queries, viewport, layout, resolution" },
+          { name: "CSSInvertedColors", id: 55, description: "`inverted-colors` CSS media feature", keywords: "css, inverted colors, accessibility, visual preferences, contrast, display modes, user settings, color scheme, readability, system preferences" },
+          { name: "CSSPointerCapabilities", id: 57, description: "", keywords: "css, pointer, input devices, touch, mouse, stylus, interaction, hardware capabilities, user interface, responsiveness" },
+          { name: "CSSPrefersColorScheme", id: 5, description: "`prefers-color-scheme` CSS media feature", keywords: "dark mode, light mode, theme, color scheme, user preference, visual style, accessibility, system settings, ui design, brightness" },
+          { name: "CSSPrefersContrast", id: 7, description: "`prefers-contrast` CSS media feature", keywords: "contrast, accessibility, visual preference, readability, color difference, user settings, display options, visibility, legibility, visual impairment" },
+          { name: "CSSPrefersReducedMotion", id: 6, description: "`prefers-reduced-motion` CSS media feature", keywords: "reduced motion, accessibility, animation, transitions, user preference, visual sensitivity, performance, battery life, usability, cognitive load" },
+          { name: "CSSPrefersReducedTransparency", id: 54, description: "`prefers-reduced-transparency` CSS media feature", keywords: "transparency, opacity, visual preference, accessibility, user settings, display options, clarity, readability, performance, battery life" },
+          { name: "CSSResolution", id: 53, description: "`resolution` CSS media feature", keywords: "resolution, dpi, screen density, pixel ratio, display quality, media queries, responsive design, image quality, rendering, sharpness" },
+          { name: "CSSVideoDynamicRange", id: 56, description: "`video-dynamic-range` CSS media feature", keywords: "video, dynamic range, hdr, sdr, display capabilities, color depth, brightness, contrast, visual quality, media playback" },
+          { name: "DeviceSensors", id: 44, description: "", keywords: "sensors, accelerometer, gyroscope, magnetometer, ambient light, proximity, orientation, motion, hardware capabilities, device features" },
+          { name: "DOMStyleOsxFontSmoothing", id: 50, description: "", keywords: "font smoothing, macos, typography, rendering, antialiasing, text display, readability, visual quality, system fonts, font rendering" },
+          { name: "FontVisibilityBaseSystem", id: 42, description: "Visibility level of font families available to CSS font-matching", keywords: "fonts, system fonts, css, font matching, typography, text rendering, font families, font availability, styling, visual design" },
+          { name: "FontVisibilityLangPack", id: 43, description: "", keywords: "fonts, language packs, localization, internationalization, character sets, typography, text rendering, multilingual support, unicode, glyphs" },
+          { name: "FontVisibilityRestrictGenerics", id: 61, description: "Are font visibility restrictions applied when resolving a CSS <generic-family>? (This may block the fonts selected in Preferences from actually being used.)", keywords: "fonts, generic family, css, font restrictions, typography, text rendering, font fallback, styling, preferences, font selection" },
+          { name: "FrameRate", id: 45, description: "", keywords: "frame rate, fps, animation, video playback, performance, smoothness, rendering, display refresh rate, motion, visual quality" },
+          { name: "Gamepad", id: 23, description: "", keywords: "gamepad, controller, input device, gaming, joystick, buttons, axes, hardware interface, user interaction, game development" },
+          { name: "HttpUserAgent", id: 24, description: "", keywords: "user agent, http headers, browser identification, client info, web requests, compatibility, server communication, device detection, networking, web standards" },
+          { name: "JSDateTimeUTC", id: 21, description: "Enforces UTC time zone, disable to make your real time zone available to web sites.", keywords: "date, time, utc, timezone, javascript, localization, time conversion, system clock, internationalization, timestamp" },
+          { name: "JSLocale", id: 12, description: "", keywords: "locale, language, region, internationalization, localization, formatting, cultural settings, user preferences, translation, global users" },
+          { name: "JSMathFdlibm", id: 22, description: "", keywords: "math, floating-point, precision, numerical computation, javascript, algorithms, scientific computing, arithmetic, calculation, performance" },
+          { name: "KeyboardEvents", id: 2, description: "", keywords: "keyboard, input, events, user interaction, key presses, shortcuts, accessibility, text entry, input devices, event handling" },
+          { name: "MediaCapabilities", id: 37, description: "", keywords: "media, capabilities, video playback, audio playback, codec support, streaming, performance, hardware acceleration, decoding, encoding" },
+          { name: "MediaDevices", id: 36, description: "", keywords: "media devices, camera, microphone, audio input, video input, hardware access, streaming, webrtc, multimedia, user permissions" },
+          { name: "MediaError", id: 49, description: "", keywords: "media error, playback issues, debugging, error handling, video problems, audio problems, streaming errors, codec issues, network errors, media support" },
+          { name: "MouseEventScreenPoint", id: 41, description: "", keywords: "mouse events, screen coordinates, pointer position, user interaction, input tracking, cursor location, event handling, ui, graphics, coordinates" },
+          { name: "NavigatorAppVersion", id: 13, description: "Various 'client identification' values of the navigator object", keywords: "navigator, app version, browser information, user agent, client identification, version string, browser detection, compatibility, web standards, feature detection" },
+          { name: "NavigatorBuildID", id: 14, description: "", keywords: "navigator, build id, browser version, software identification, release information, debugging, compatibility, version tracking, browser details, build number" },
+          { name: "NavigatorConnection", id: 39, description: "", keywords: "network information, connection type, bandwidth, data saver, online status, network quality, latency, mobile data, wifi, cellular" },
+          { name: "NavigatorHWConcurrency", id: 15, description: "", keywords: "hardware concurrency, cpu cores, parallelism, performance, multithreading, system capabilities, processor information, web workers, computation, device specs" },
+          { name: "NavigatorOscpu", id: 16, description: "", keywords: "operating system, cpu, system information, platform details, hardware info, device characteristics, browser capabilities, compatibility, user agent, system architecture" },
+          { name: "NavigatorPlatform", id: 17, description: "", keywords: "platform, operating system, device type, system information, browser environment, compatibility, user agent, hardware, software, device detection" },
+          { name: "NavigatorUserAgent", id: 18, description: "", keywords: "user agent, browser identification, client information, http headers, compatibility, device detection, web crawlers, analytics, feature detection, browser capabilities" },
+          { name: "PointerEvents", id: 1, description: "", keywords: "pointer events, touch, mouse, pen, input devices, user interaction, event handling, gestures, click events, multitouch" },
+          { name: "ReduceTimerPrecision", id: 34, description: "See also Reduce Timer Precision (RTP) Caller Type", keywords: "timer precision, performance, security, timing attacks, javascript, event loop, scheduling, animation, benchmarking, power saving" },
+          { name: "RoundWindowSize", id: 46, description: "", keywords: "window size, rounding, screen dimensions, viewport, layout, responsive design, display properties, ui, browser window, css units" },
+          { name: "ScreenAvailRect", id: 30, description: "", keywords: "screen size, available space, viewport dimensions, display area, screen resolution, device pixels, layout, responsive design, ui scaling, screen real estate" },
+          { name: "ScreenOrientation", id: 3, description: "", keywords: "screen orientation, portrait, landscape, device rotation, responsive design, mobile devices, tablets, layout adjustment, ui adaptation, viewport" },
+          { name: "ScreenPixelDepth", id: 28, description: "", keywords: "pixel depth, color depth, display quality, screen properties, bit depth, color reproduction, graphics, image quality, monitor capabilities, visual fidelity" },
+          { name: "ScreenRect", id: 29, description: "", keywords: "screen dimensions, display size, viewport, pixel dimensions, screen resolution, device screen, layout, responsive design, ui scaling, display properties" },
+          { name: "SiteSpecificZoom", id: 60, description: "", keywords: "zoom level, website specific, text size, content scaling, accessibility, user preferences, readability, responsive design, ui customization, visual adjustment" },
+          { name: "SpeechSynthesis", id: 4, description: "SpeechSynthesis part of the Web Speech API", keywords: "speech synthesis, text-to-speech, web speech api, accessibility, voice output, audio generation, language processing, user interface, assistive technology, localization" },
+          { name: "StreamTrackLabel", id: 19, description: "Audio/VideoStreamTrack labels", keywords: "media streams, audio tracks, video tracks, webrtc, multimedia, streaming, labels, track identification, media sources, content management" },
+          { name: "StreamVideoFacingMode", id: 20, description: "", keywords: "video facing mode, camera direction, front camera, rear camera, webrtc, video capture, media streams, device orientation, mobile video, user-facing" },
+          { name: "TouchEvents", id: 0, description: "", keywords: "touch events, touchscreen, mobile interaction, gesture recognition, multitouch, user input, event handling, touch interfaces, mobile devices, interaction design" },
+          { name: "UseStandinsForNativeColors", id: 47, description: "", keywords: "native colors, color scheme, system colors, ui theming, css variables, visual design, accessibility, contrast, color management, user preferences" },
+          { name: "VideoElementMozFrameDelay", id: 32, description: "mozFrameDelay", keywords: "video playback, frame delay, performance metrics, video rendering, mozilla specific, media elements, streaming quality, frame timing, video analysis, playback smoothness" },
+          { name: "VideoElementMozFrames", id: 31, description: "HTMLVideoElement mozParsedFrames, mozDecodedFrames, mozPresentedFrames, mozPaintedFrames", keywords: "video frames, playback statistics, performance metrics, video rendering, mozilla specific, media elements, frame counting, video analysis, streaming quality, debugging" },
+          { name: "VideoElementPlaybackQuality", id: 33, description: "getVideoPlaybackQuality()", keywords: "video quality, playback metrics, streaming performance, frame statistics, media elements, video analysis, quality of service, buffering, dropped frames, smooth playback" },
+          { name: "WebGLRenderCapability", id: 58, description: "WebGL", keywords: "webgl, 3d graphics, gpu acceleration, canvas rendering, hardware capabilities, gaming, visualization, graphics api, opengl, gpu features" },
+          { name: "WebGLRenderInfo", id: 59, description: "", keywords: "webgl info, renderer information, gpu details, graphics capabilities, opengl data, hardware acceleration, 3d performance, graphics card, driver version, compatibility" },
+          { name: "WidgetEvents", id: 35, description: "Hide keyboard and pointer WidgetEvents", keywords: "widget events, user interface, input handling, keyboard events, pointer events, event masking, ui components, interaction, accessibility, event bubbling" },
+          { name: "WindowDevicePixelRatio", id: 40, description: "", keywords: "device pixel ratio, screen density, retina displays, high dpi, responsive images, css pixels, physical pixels, scaling, resolution, display quality" },
+          { name: "WindowInnerScreenXY", id: 27, description: "", keywords: "window position, screen coordinates, viewport location, browser window, ui positioning, screen real estate, multi-monitor, window management, layout, coordinates" },
+          { name: "WindowOuterSize", id: 25, description: "", keywords: "window size, outer dimensions, browser chrome, screen space, viewport, ui layout, responsive design, window resizing, display properties, screen real estate" },
+          { name: "WindowScreenXY", id: 26, description: "", keywords: "window position, screen coordinates, viewport location, browser window, ui positioning, screen real estate, multi-monitor, window management, layout, coordinates" }
+        ],
+      }
+    }
+  </script>
+
+</body>
+
+</html>
